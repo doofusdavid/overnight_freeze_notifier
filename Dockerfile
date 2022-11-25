@@ -1,4 +1,6 @@
 FROM python:3.10-alpine
+RUN apk add --no-cache tzdata
+ENV TZ=America/Denver
 RUN pip install --upgrade pip
 RUN pip install --upgrade python-dotenv twilio requests
 WORKDIR /py_cronjob
