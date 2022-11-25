@@ -1,8 +1,9 @@
-FROM python:3.10
+FROM python:3.10-alpine
 RUN pip install --upgrade pip
-RUN pip install --upgrade python-dotenv twilio requests json datetime pytz
+RUN pip install --upgrade python-dotenv twilio requests
 WORKDIR /py_cronjob
-COPY crontab /etc/cron.d/crontab
-ADD overnight_freeze_notifier.py /py_cronjob
-RUN crontab /etc/cron.d/crontab
-CMD ["cron", "-f"]
+COPY crontab /py_cronjob
+COPY overnight_freeze_notifier.py /py_cronjob
+RUN touch cron_log.log
+RUN /usr/bin/crontab /py_cronjob/crontab
+CMD ["/usr/sbin/crond", "-f", "-d", "0"]

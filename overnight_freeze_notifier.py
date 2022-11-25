@@ -3,7 +3,6 @@ import json, os, requests, pytz
 from datetime import datetime
 from twilio.rest import Client
 
-
 def format_date(date):
     return date.strftime("%-m/%-d/%y %-I:%M %p")
 
