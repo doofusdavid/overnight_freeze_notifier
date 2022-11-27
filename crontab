@@ -1,1 +1,1 @@
-0 10 * * * cd /py_cronjob && /usr/local/bin/python overnight_freeze_notifier.py >> cron_log.log 2>&1
+0 10 * * * cd /py_cronjob && /usr/local/bin/python overnight_freeze_notifier.py 2>&1
