@@ -55,4 +55,4 @@ if __name__ == '__main__':
             body=message,
             from_=twilio_from_number,
             to=twilio_to_number )
-        print( message.sid)
+        print(f"{format_date(current_date)} - {message.sid}")
