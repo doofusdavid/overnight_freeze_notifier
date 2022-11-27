@@ -19,14 +19,10 @@ if __name__ == '__main__':
     twilio_from_number = os.getenv('TWILIO_FROM_NUMBER')
     twilio_to_number = os.getenv('TWILIO_TO_NUMBER')
 
-
-    if os.getenv("DEBUG") == "True":
-        weather_data = json.loads(open("sample_response.json").read())
-    else:
-        base_url = "https://api.openweathermap.org/data/3.0/onecall"
-        call_url = f"{base_url}?lat={location_lat}&lon={location_lon}&exclude=minutely,alerts&appid={api_key}&units=imperial"
-        response = requests.get(call_url)
-        weather_data = json.loads(response.text)
+    base_url = "https://api.openweathermap.org/data/3.0/onecall"
+    call_url = f"{base_url}?lat={location_lat}&lon={location_lon}&exclude=minutely,alerts&appid={api_key}&units=imperial"
+    response = requests.get(call_url)
+    weather_data = json.loads(response.text)
 
     timezone = pytz.timezone("America/Denver")
     current_date = timezone.localize(datetime.fromtimestamp(weather_data["current"]["dt"]))
@@ -37,16 +33,21 @@ if __name__ == '__main__':
     message += f"Your Current Temperature Threshold: {temp_threshold}°F"
 
     horsey_message = ""
-    for hour in weather_data["hourly"]:
+    for hour in weather_data["hourly"][0:24]:
         hour_date = timezone.localize(datetime.fromtimestamp(hour["dt"]))
         if hour["temp"] <= float(temp_threshold):
-            horsey_message += f"Cold 🐴 Warning!: {format_date(hour_date)} - {hour['temp']}°F\n"
+            horsey_message += f"❄️ 🐴 ⚠️!: {format_date(hour_date)} - {hour['temp']}°F\n"
     
     if len(horsey_message)  > 0:
         message += "\n" + horsey_message
     else:
-        message += "\n\nNo need to worry about the horses today! The temperature is above your threshold."
+        message += "\n\nNo need to worry about the horses today! \nThe temperature is above your threshold for the next 24 hours."
 
+    for hour in weather_data["hourly"][12:]:
+        if hour["temp"] <= float(temp_threshold):
+            message += "\n\nKeep an eye on tomorrow, it looks like it might be too cold tomorrow!"
+            break
+            
     if os.getenv("DEBUG") == "True":
         print(message)
     else:
